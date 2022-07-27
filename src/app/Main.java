@@ -26,7 +26,7 @@ public class Main {
         Path movie3 = Path.of("movies3.csv");
         Path[] arquivos = new Path[]{movie1, movie2, movie3};
         HashSet<Filme> filmes = new LerArquivoServiceImpl().arquivoToFilme(arquivos);
-        //Escrica dos Arquivos
+        //Escrita dos Arquivos
         //MELHORES 20
         List<Filme> filmesTop20 = filmes
                 .stream()
@@ -36,10 +36,11 @@ public class Main {
                         .filter(genero -> runTest("Horror", genero
                                 .getGenero()) > 0)
                         .count() > 0)
+                .sorted(Comparator.comparing(Filme::getClassificacao))
+                .limit(20)
                 .collect(Collectors.toList());
 
-        filmesTop20.sort(Comparator.comparing(Filme::getClassificacao));
-        while (filmesTop20.stream().count()> 20){filmesTop20.remove(20);}
+
         String destino = new EscreverArquivoTop20ServiceImpl().escreverArquivo(filmesTop20);
         System.out.println("O arquivo " + destino + " foi criado com sucesso");
         //Criar um arquivo para cada ano,
@@ -48,9 +49,14 @@ public class Main {
         filmes.forEach(filme -> anos.add(filme.getAno()));
         for (Year year :
                 anos) {
-            List<Filme> filmes1 = filmes.stream().filter(filme -> filme.getAno().equals(year)).collect(Collectors.toList());
-            filmes1.sort(Comparator.comparing(Filme::getClassificacao));
-            while (filmes1.stream().count()> 50){filmes1.remove(50);}
+            List<Filme> filmes1 = filmes
+                    .stream()
+                    .filter(filme -> filme
+                            .getAno()
+                            .equals(year))
+                    .sorted(Comparator.comparing(Filme::getClassificacao))
+                    .limit(50)
+                    .collect(Collectors.toList());
             String s = new EscreverArquivoAnoServiceImpl().escreverArquivo(filmes1, year.toString());
             System.out.println("O arquivo " + s + " foi criado com sucesso");
         }
