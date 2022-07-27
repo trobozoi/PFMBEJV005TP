@@ -1,18 +1,16 @@
 package app;
 
 import model.Filme;
-import service.EscreverArquivoAnoService;
-import service.EscreverArquivoTop20Service;
-import service.LerArquivoService;
+import service.EscreverArquivoAnoServiceImpl;
+import service.EscreverArquivoTop20ServiceImpl;
+import service.LerArquivoServiceImpl;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -27,7 +25,7 @@ public class Main {
         Path movie2 = Path.of("movies2.csv");
         Path movie3 = Path.of("movies3.csv");
         Path[] arquivos = new Path[]{movie1, movie2, movie3};
-        HashSet<Filme> filmes = new LerArquivoService().arquivoToFilme(arquivos);
+        HashSet<Filme> filmes = new LerArquivoServiceImpl().arquivoToFilme(arquivos);
         //Escrica dos Arquivos
         //MELHORES 20
         List<Filme> filmesTop20 = filmes
@@ -42,7 +40,7 @@ public class Main {
 
         filmesTop20.sort(Comparator.comparing(Filme::getClassificacao));
         while (filmesTop20.stream().count()> 20){filmesTop20.remove(20);}
-        String destino = new EscreverArquivoTop20Service().escreverArquivo(filmesTop20);
+        String destino = new EscreverArquivoTop20ServiceImpl().escreverArquivo(filmesTop20);
         System.out.println("O arquivo " + destino + " foi criado com sucesso");
         //Criar um arquivo para cada ano,
         // no conteudo dos arquivos incluir os 50 melhores filmes daquele ano ordenados por rating.
@@ -53,7 +51,7 @@ public class Main {
             List<Filme> filmes1 = filmes.stream().filter(filme -> filme.getAno().equals(year)).collect(Collectors.toList());
             filmes1.sort(Comparator.comparing(Filme::getClassificacao));
             while (filmes1.stream().count()> 50){filmes1.remove(50);}
-            String s = new EscreverArquivoAnoService().escreverArquivo(filmes1, year.toString());
+            String s = new EscreverArquivoAnoServiceImpl().escreverArquivo(filmes1, year.toString());
             System.out.println("O arquivo " + s + " foi criado com sucesso");
         }
 
